@@ -1,3 +1,7 @@
+/**
+ * A simple implementation for a linked list of arbitrary structs, with
+ * parallel utility functions for a list of integers.
+ */
 #ifndef LIST_H
 #define LIST_H
 
@@ -19,10 +23,6 @@ typedef list_t ilist_t;
 // Add the given value to the end of the list
 void append(list_t *list, void *val);
 void nappend(ilist_t *list, int n);
-
-// Add the given value to the list at the given index
-void add(list_t *list, int idx, void *val);
-void nadd(ilist_t *list, int idx, int n);
 
 // Add the given value to the end of the list
 void prepend(list_t *list, void *val);
