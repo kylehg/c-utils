@@ -37,6 +37,20 @@ void _prepend(list_t *list, item_t *item) {
     list->len++;
 }
 
+item_t *_find(list_t *list, int (*pred)(item_t *)) {
+    item_t *cur;
+
+    assert(list != NULL);
+    assert(pred != NULL);
+
+    for (cur = list->head; cur; cur = cur->next) {
+        if (pred(cur)) {
+            return cur;
+        }
+    }
+    return NULL;
+}
+
 item_t *_get(list_t *list, int idx) {
     int i = 0;
     item_t *cur;
