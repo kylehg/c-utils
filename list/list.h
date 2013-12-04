@@ -9,7 +9,7 @@
 
 typedef struct item_t {
     void *val;                  // An arbitrary pointer
-    int n;                      // A integer value
+    int n;                      // An integer value
     struct item_t *prev, *next;
 } item_t;
 
@@ -19,6 +19,9 @@ typedef struct list_t {
 } list_t;
 
 typedef list_t ilist_t;
+
+// Create a new list
+list_t *init_list();
 
 // Add the given value to the end of the list
 void append(list_t *list, void *val);

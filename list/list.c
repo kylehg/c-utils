@@ -1,6 +1,14 @@
 #include <assert.h>
 #include "list.h"
 
+list_t *init_list() {
+    list_t *list = malloc(sizeof(list_t));
+    list->len  = 0;
+    list->head = NULL;
+    list->tail = NULL;
+    return list;
+}
+
 void _append(list_t *list, item_t *item) {
     assert(list != NULL);
 
@@ -12,6 +20,7 @@ void _append(list_t *list, item_t *item) {
 
     item->prev = list->tail;
     list->tail = item;
+    list->len++;
 }
 
 void _prepend(list_t *list, item_t *item) {
@@ -25,6 +34,7 @@ void _prepend(list_t *list, item_t *item) {
 
     item->next = list->head;
     list->head = item;
+    list->len++;
 }
 
 item_t *_get(list_t *list, int idx) {
@@ -69,4 +79,5 @@ void remove_item(list_t *list, item_t *item) {
         list->tail = item->prev;
     }
     free(item);
+    list->len--;
 }
