@@ -3,12 +3,32 @@
 
 list_t *init_list() {
     list_t *list = malloc(sizeof(list_t));
+    if (!list) {
+        perror("init_list");
+        return NULL;
+    }
+
     list->len  = 0;
     list->head = NULL;
     list->tail = NULL;
     return list;
 }
 
+// Initalize an empty list item
+item_t *_init_item() {
+    item_t *item = malloc(sizeof(item_t));
+    if (!item) {
+        perror("_init_item");
+        return NULL;
+    }
+
+    item->n    = DEFAULT_INT;
+    item->val  = NULL;
+    item->next = NULL;
+    item->prev = NULL;
+}
+
+// Add a list item to the end of a list
 void _append(list_t *list, item_t *item) {
     assert(list != NULL);
 
@@ -23,6 +43,19 @@ void _append(list_t *list, item_t *item) {
     list->len++;
 }
 
+void append(list_t *list, void *val) {
+    item_t *item = _init_item();
+    item->val = val;
+    _append(list, item);
+}
+
+void nappend(ilist_t *list, int n) {
+    item_t *item = _init_item();
+    item->n = n;
+    _append(list, item);
+}
+
+// Add a list item to the beginning of a list
 void _prepend(list_t *list, item_t *item) {
     assert(list != NULL);
 
@@ -37,20 +70,19 @@ void _prepend(list_t *list, item_t *item) {
     list->len++;
 }
 
-item_t *_find(list_t *list, int (*pred)(item_t *)) {
-    item_t *cur;
-
-    assert(list != NULL);
-    assert(pred != NULL);
-
-    for (cur = list->head; cur; cur = cur->next) {
-        if (pred(cur)) {
-            return cur;
-        }
-    }
-    return NULL;
+void prepend(list_t *list, void *val) {
+    item_t *item = _init_item();
+    item->val = val;
+    _prepend(list, item);
 }
 
+void nprepend(ilist_t *list, int n) {
+    item_t *item = _init_item();
+    item->n = n;
+    _prepend(list, item);
+}
+
+// Return the list item at the given index, or NULL if index out of bounds
 item_t *_get(list_t *list, int idx) {
     int i = 0;
     item_t *cur;
@@ -77,6 +109,16 @@ item_t *_get(list_t *list, int idx) {
     return NULL;
 }
 
+void *get(list_t *list, int idx) {
+    item_t *item = _get(list, idx);
+    return (item ? item->val : NULL);
+}
+
+int nget(ilist_t *list, int idx) {
+    item_t *item = _get(list, idx);
+    return (item ? item->n : NULL);
+}
+
 void remove_item(list_t *list, item_t *item) {
     assert(list != NULL);
     assert(item != NULL);
@@ -94,4 +136,110 @@ void remove_item(list_t *list, item_t *item) {
     }
     free(item);
     list->len--;
+}
+
+void *pop_idx(list_t *list, int idx) {
+    list_t *item = _get(list, idx);
+    if (!item) {
+        return NULL;
+    }
+
+    void *val = item->val;
+    remove_item(list, item);
+    return val;
+}
+
+int npop_idx(ilist_t *list, int idx) {
+    list_t *item = _get(list, idx);
+    if (!item) {
+        return NOT_FOUND;
+    }
+
+    int n = item->n;
+    remove_item(list, item);
+    return n;
+}
+
+void *pop_first(list_t *list) {
+    return pop_idx(list, 0);
+}
+
+int npop_first(ilist_t *list) {
+    return npop_idx(list, 0);
+}
+
+void *pop_last(list_t *list) {
+    return pop_idx(list, (list->len - 1));
+}
+
+int npop_last(ilist_t *list) {
+    return npop_idx(list, (list->len - 1));
+}
+
+int remove(list_t *list, void *val) {
+    int idx = 0;
+    item_t *cur;
+
+    assert(list != NULL);
+    assert(val != NULL);
+
+    for (cur = list->head; cur; cur = cur->next, idx++) {
+        if (cur->val == val) {
+            return idx;
+        }
+    }
+    return NOT_FOUND;
+}
+
+int nremove(ilist_t *list, int n) {
+    int idx = 0;
+    item_t *cur;
+
+    assert(list != NULL);
+    assert(n != DEFAULT_INT);
+
+    for (cur = list->head; cur; cur = cur->next, idx++) {
+        if (cur->n == n) {
+            return idx;
+        }
+    }
+    return NOT_FOUND;
+}
+
+void **to_arr(list_t *list) {
+    int idx = 0;
+    item_t *cur;
+    void **arr;
+
+    assert(list != NULL);
+
+    arr = malloc(list->len);
+    if (!arr) {
+        perror("to_arr");
+        return NULL;
+    }
+
+    for (cur = list->head; cur; cur = cur->next, idx++) {
+        arr[idx] = cur->val;
+    }
+    return arr;
+}
+
+int *to_narr(ilist_t *list) {
+    int idx = 0;
+    item_t *cur;
+    int *arr;
+
+    assert(list != NULL);
+
+    arr = malloc(list->len);
+    if (!arr) {
+        perror("to_narr");
+        return NULL;
+    }
+
+    for (cur = list->head; cur; cur = cur->next, idx++) {
+        arr[idx] = cur->n;
+    }
+    return arr;
 }
