@@ -6,6 +6,7 @@
 #define LIST_H
 
 #define NOT_FOUND -1
+#define DEFAULT_INT -1
 
 typedef struct item_t {
     void *val;                  // An arbitrary pointer
